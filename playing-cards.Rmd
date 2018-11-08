@@ -1,0 +1,261 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Save card names with a character vector
+
+```{r}
+hand <- c("ace", "king", "queen", "jack", "ten")
+hand
+```
+
+The most common attributes to give an atomic vector are names, dimensions (dim),
+and classes
+
+```{r}
+names(die)
+```
+
+```{r}
+names(die) <- c("one", "two", "three", "four", "five", "six")
+names(die)
+```
+
+```{r}
+die
+names(die) <- NULL
+die
+```
+
+To change the names, assign a new set of labels to names:
+
+You can transform an atomic vector into an n-dimensional array by giving it a dimensions
+attribute with dim.
+
+```{r}
+dim(die) <- c(2, 3)
+die
+```
+
+```{r}
+hand1 <- c("ace", "king", "queen", "jack", "ten", "spades", "spades",
+"spades", "spades", "spades")
+
+matrix(hand1, nrow = 5)
+matrix(hand1, ncol = 2)
+dim(hand1) <- c(5, 2)
+```
+
+
+
+Data Frame
+```{r}
+df <- data.frame(face = c("ace", "two", "six"),
+suit = c("clubs", "clubs", "clubs"), value = c(1, 2, 3))
+
+df
+```
+
+Save a copy of Deck as a new csv
+
+```{r}
+write.csv(deck, file = "cards.csv", row.names = FALSE)
+```
+
+```{r}
+deck[1,c(1,2,3)]
+```
+
+```{r}
+new <- deck[1, c(1,2,3)]
+new
+```
+
+```{r}
+deck[1, c(TRUE, TRUE, FALSE)]
+```
+
+```{r}
+deal <- function(cards){
+  cards[1, ]
+}
+```
+
+```{r}
+deal(deck)
+```
+
+SUFFLE THE DECK
+
+To shuffle the deck, you need to randomly reorder the rows in the data frame.
+
+```{r}
+deck2 <- deck[1:52, ]
+```
+
+If you want the rows to come in a random order, then you need to sort the integers from 1 to 52 into a random order and use the results as a row index.
+
+```{r}
+
+random <- sample(1:52, size = 52)
+
+```
+
+
+```{r}
+deck4 <- deck[random, ]
+head(deck4)
+```
+
+```{r}
+shuffle <- function(df){
+  suff <- sample(1:52, size = 52)
+  df[suff, ]
+}
+```
+
+
+```{r}
+shuffle(deck)
+```
+
+```{r}
+deal(deck)
+
+deck2 <- shuffle(deck)
+```
+
+```{r}
+deal(deck2)
+```
+
+```{r}
+deck2 <- deck
+```
+
+CHANGING VALUES IN PLACE
+
+You can also create values that do not yet exist in your object. R will expand the object to accommodate the new values:
+```{r}
+deck2$new <- 1:52
+head(deck2)
+```
+
+To play war, you just need to change the values of your aces from 1 to 14.
+
+As long as you haven’t shuffled your deck, you know just where the aces are. They appear every 13 cards. Hence, you can describe them with R’s notation system:
+
+Now all you have to do is assign a new set of values to these old values
+
+```{r}
+deck2$value[c(13, 26, 39, 52)] <- 14
+```
+
+What if you've suffled your deck?
+
+First, build a logical test that identifies the aces in your shuffled deck:
+
+```{r}
+deck3 <- shuffle(deck)
+deck3$face == "ace"
+```
+
+Then use the test to single out the ace point values. Since the test returns a logical vector, you can use it as an index:
+```{r}
+deck3$value[deck3$face == "ace"]
+
+```
+
+Finally, use assignment to change the ace values in deck3 :
+```{r}
+deck3$value[deck3$face == "ace"] <- 14
+head(deck3)
+```
+
+In hearts, every card has a value of zero:
+```{r}
+deck4 <- deck
+deck4$value <- 0
+deck4
+```
+
+Each card in the suit of heartshas a value of 1.
+
+```{r}
+deck4$suit == "hearts"
+```
+
+Then use your test to select the value of this card
+```{r}
+deck4$value[deck4$suit == "hearts"]
+```
+
+Finaly assign a new number to this value
+```{r}
+deck4$value[deck4$suit == "hearts"] <- 1
+```
+
+In hearts, the queen of spades has the most unusual value of all: she’s worth 13 points.
+
+You could find all of the queens:
+```{r}
+deck4[deck4$face == "queen", ]
+```
+
+Boolean operators combine multiple logical tests together into a single test.
+
+You want to test each card to see if it is both a queen and a spade. You can write
+this test in R with:
+```{r}
+deck4$face == "queen" & deck4$suit == "spades"
+```
+
+I’ll save the results of this test to its own object. That will make the results easier to work with:
+```{r}
+queenOfSpades <- deck4$face == "queen" & deck4$suit == "spades"
+```
+
+select the value of the queen of spades.
+```{r}
+deck4[queenOfSpades, ]
+deck4$value[queenOfSpades] <- 13
+```
+
+```{r}
+deck5 <- deck
+```
+
+```{r}
+head(deck5)
+```
+
+You can change the value of the face cards in one fell swoop with %in% :
+```{r}
+facecard <- deck5$face %in% c("king", "queen", "jack")
+```
+
+```{r}
+deck5[facecard, ]
+```
+
+```{r}
+deck5$value[facecard] <- 10
+head(deck5, 13)
+```
+
+```{r}
+deck5$value[deck5$face == "ace"] <- NA
+deck5
+```
+
+```{r}
+ls(emptyenv())
+ls(globalenv())
+```
+
+Every time R runs a function, it creates a new active environment to evaluate the function in
+
+R creates a new environment each time it evaluates a function. R will use the new environment as the active environment while it runs the function
+
+
